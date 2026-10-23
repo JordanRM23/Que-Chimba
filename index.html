@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qué Chimba — Smash Burgers & Hot Dogs</title>
+  <meta name="description" content="Smash burgers, papas cargadas y hot dogs estilo colombiano. Pide en el local o a domicilio.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header>
+    <div class="logo">QUÉ <span>CHIMBA</span> 🍔</div>
+    <nav>
+      <a onclick="showView('home')">Inicio</a>
+      <a onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Menú</a>
+      <a onclick="showView('admin')">Panel Admin</a>
+    </nav>
+    <button class="cart-btn" onclick="toggleCart(true)">🛒 Carrito <span id="cartCount">0</span></button>
+  </header>
+
+  <!-- ================= VISTA CLIENTE ================= -->
+  <div id="homeView">
+    <div class="hero">
+      <div class="slide active" style="background-image:url('https://kimi-web-img.kimi.ai/img/basilandbubbly.com/071f62bed40973ad9c2c0dfd22a111813b0ab467.jpg')"></div>
+      <div class="slide" style="background-image:url('https://kimi-web-img.kimi.ai/img/www.lovebakesgoodcakes.com/fd9c40ad152facd3bed99159c27b20cc2bf8c79f.jpg')"></div>
+      <div class="slide" style="background-image:url('https://kimi-web-img.kimi.ai/img/www.mycolombianrecipes.com/77af35b9101e05c0c211aa977fcaee281bf831a5.jpg')"></div>
+      <div class="overlay">
+        <h1>Donde el sabor se siente y la buena vibra fluye 🌴</h1>
+        <p>Smash burgers, papas cargadas y hot dogs estilo colombiano. Pide en el local o a domicilio. ¡Qué chimba!</p>
+        <button class="cta" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Ver el menú</button>
+      </div>
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <section id="menu">
+      <h2 class="sec">Nuestro Menú</h2>
+      <p class="sub">Haz tu pedido directamente desde aquí — en el local o a domicilio</p>
+      <div class="tabs" id="tabs"></div>
+      <div class="grid" id="grid"></div>
+    </section>
+  </div>
+
+  <!-- ================= VISTA ADMIN ================= -->
+  <div id="adminView">
+    <section>
+      <div id="loginBox" class="login">
+        <h2 class="sec" style="font-size:1.4rem">🔐 Acceso Admin</h2>
+        <p class="sub" style="margin-bottom:14px">Ingresa con tu cuenta de administrador</p>
+        <input id="lUser" type="email" placeholder="Correo" autocomplete="username">
+        <input id="lPass" type="password" placeholder="Contraseña" autocomplete="current-password">
+        <button class="checkout" onclick="doLogin()">Ingresar</button>
+        <p id="loginErr" style="color:#c00;text-align:center;margin-top:8px;display:none">Credenciales incorrectas</p>
+      </div>
+
+      <div id="adminPanel" style="display:none">
+        <h2 class="sec">Panel de Control</h2>
+        <p class="sub">Gestiona productos, precios y pedidos</p>
+        <div class="admin-tabs">
+          <button class="tab active" onclick="adminTab('orders',this)">📦 Pedidos</button>
+          <button class="tab" onclick="adminTab('products',this)">🍔 Productos</button>
+        </div>
+        <div id="tabOrders"></div>
+        <div id="tabProducts" style="display:none">
+          <table>
+            <thead>
+              <tr><th>Producto</th><th>Categoría</th><th>Precio $</th><th>Disponible</th><th></th></tr>
+            </thead>
+            <tbody id="prodRows"></tbody>
+          </table>
+          <h3 style="margin:24px 0 10px;color:var(--maroon)">➕ Agregar producto</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="nName" placeholder="Nombre" style="padding:9px;border:1px solid #ccc;border-radius:8px">
+            <input id="nPrice" type="number" step="0.05" placeholder="Precio" style="padding:9px;border:1px solid #ccc;border-radius:8px;width:100px">
+            <select id="nCat" style="padding:9px;border-radius:8px">
+              <option>Smash Burgers</option>
+              <option>Papas</option>
+              <option>Hot Dogs</option>
+              <option>Bebidas</option>
+              <option>Extras</option>
+            </select>
+            <button class="add" onclick="addProduct()">Agregar</button>
+          </div>
+          <button class="cta" style="margin-top:26px" onclick="logout()">Cerrar sesión</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= CARRITO ================= -->
+  <div class="drawer" id="drawer">
+    <header><b style="font-size:1.15rem">🛒 Tu pedido</b><button class="cart-btn" onclick="toggleCart(false)">✕</button></header>
+    <div class="content">
+      <div id="cartItems"></div>
+      <div class="mode">
+        <button id="mLocal" class="active" onclick="setMode('local')">🏠 En el local</button>
+        <button id="mDom" onclick="setMode('domicilio')">🛵 A domicilio</button>
+      </div>
+      <div class="addr" id="addrBox">
+        <input id="cName" placeholder="Tu nombre">
+        <input id="cTel" placeholder="Teléfono / WhatsApp">
+        <textarea id="cAddr" rows="2" placeholder="Dirección de entrega"></textarea>
+      </div>
+      <div class="total-row"><span>Subtotal</span><span id="tSub">$0.00</span></div>
+      <div class="total-row" id="delRow" style="display:none"><span>Domicilio</span><span>$1.50</span></div>
+      <div class="total-row" style="border-top:2px solid var(--maroon);font-size:1.2rem"><span>TOTAL</span><span id="tTotal">$0.00</span></div>
+      <button class="checkout" id="btnOrder" onclick="placeOrder()">Confirmar pedido ✅</button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL / TOAST ================= -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h3>✅ ¡Pedido recibido, qué chimba!</h3>
+      <p id="modalTxt"></p>
+      <button class="cta" style="margin:16px auto 0" onclick="closeModal()">Entendido</button>
+    </div>
+  </div>
+  <div id="toast"></div>
+
+  <footer>© 2026 Qué Chimba — Donde el sabor se siente y la buena vibra fluye · Abierto todos los días</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
